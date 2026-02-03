@@ -1,0 +1,16 @@
+{
+  "name": "holes_touching_border",
+  "ref_mm": 100.0,
+  "ref_px": 220.0,
+  "tolerances": {
+    "bbox_mm_abs": 6.0
+  },
+  "preprocess": {
+    "blur_ksize": 3,
+    "adaptive_block_size": 61,
+    "adaptive_c": 3,
+    "morph_kernel": 3,
+    "morph_iters": 0
+  },
+  "notes": "Hole very close to outer border (thin wall). Edge-case for hole detection and cleanup."
+}
