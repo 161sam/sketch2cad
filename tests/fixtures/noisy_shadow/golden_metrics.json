@@ -1,0 +1,15 @@
+{
+  "num_entities": 4,
+  "entities_by_type": {
+    "SPLINE": 4
+  },
+  "layers": {
+    "OUTLINE": 4
+  },
+  "bbox_mm": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

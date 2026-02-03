@@ -1,0 +1,9 @@
+{
+  "name": "noisy_shadow",
+  "ref_mm": 100.0,
+  "ref_px": 220.0,
+  "tolerances": {
+    "bbox_mm_abs": 4.0
+  },
+  "notes": "Synthetic shadow gradient + gaussian noise + blur. Tests robustness of preprocess + potrace."
+}
