@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+
+# Build / dist
+build/
+dist/
+
+# Test artifacts
+.pytest_cache/
+coverage.xml
+
+# DXF / CAD outputs
+*.dxf
+*.step
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime folders
+examples/output/
