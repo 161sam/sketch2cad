@@ -166,7 +166,7 @@ def svg_to_paths(svg_path: Path, *, layer: str = "OUTLINE") -> List[VectorPath]:
 
     out: list[VectorPath] = []
     for p, attrs in zip(paths, path_attrs):
-        lp = attrs.get("class") or attrs.get("id") or layer
+        lp = layer
 
         segments: list[PathSegment] = []
         for seg in p:

@@ -1,0 +1,17 @@
+{
+  "name": "holes_nested",
+  "ref_mm": 100.0,
+  "ref_px": 200.0,
+  "tolerances": {
+    "bbox_mm_abs": 4.0
+  },
+  "preprocess": {
+    "blur_ksize": 3,
+    "adaptive_block_size": 51,
+    "adaptive_c": 5,
+    "morph_kernel": 3,
+    "morph_iters": 1
+  },
+  "notes": "Outer shape with an inner hole (nested contour). Validates HOLES layer separation."
+}
+
