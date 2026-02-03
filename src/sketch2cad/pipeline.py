@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import traceback
 from pathlib import Path
 
 import cv2
@@ -60,7 +61,15 @@ def run_pipeline(cfg: PipelineConfig) -> Report:
         return rep
 
     except Exception as e:
-        errors.append(str(e))
+        msg = str(e).strip()
+        if not msg:
+            msg = repr(e)
+        errors.append(msg)
+        errors.append(
+            "traceback:\n"
+            + "".join(traceback.format_exception(type(e), e, e.__traceback__))
+        )
+
         rep = Report(
             status="error",
             input_path=cfg.input_path,
