@@ -4,7 +4,6 @@ import re
 import shutil
 import subprocess
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple
 from xml.etree import ElementTree as ET
@@ -104,7 +103,6 @@ def _extract_group_transform(svg_text: str) -> Affine:
     except Exception:
         return _affine_identity()
 
-    # Find first group with transform
     for el in root.iter():
         if el.tag.endswith("g") and "transform" in el.attrib:
             return _parse_transform_list(el.attrib.get("transform", ""))
@@ -127,6 +125,10 @@ def binary_to_svg(binary: np.ndarray, out_svg: Path) -> None:
     """
     Uses potrace CLI to convert a binary bitmap into an SVG file.
     We set unit (-u 1) to reduce surprising scaling factors.
+
+    Important: Potrace expects black shapes on white background.
+    Our preprocess produces ink=255 on background=0 (THRESH_BINARY_INV),
+    so we invert before feeding potrace.
     """
     _ensure_potrace()
     out_svg.parent.mkdir(parents=True, exist_ok=True)
@@ -135,8 +137,8 @@ def binary_to_svg(binary: np.ndarray, out_svg: Path) -> None:
         td_path = Path(td)
         inp = td_path / "input.pgm"
 
-        # Write binary bitmap; potrace accepts PGM.
-        cv2.imwrite(str(inp), binary)
+        inv = 255 - binary
+        cv2.imwrite(str(inp), inv)
 
         cmd = ["potrace", str(inp), "-s", "-u", "1", "-o", str(out_svg)]
         proc = subprocess.run(cmd, capture_output=True, text=True)
@@ -160,12 +162,10 @@ def svg_to_paths(svg_path: Path, *, layer: str = "OUTLINE") -> List[VectorPath]:
     svg_text = svg_path.read_text(encoding="utf-8", errors="replace")
     gxf = _extract_group_transform(svg_text)
 
-    # svg2paths2 reads from file path; returns (paths, attributes, svg_attributes)
     paths, path_attrs, _svg_attrs = svg2paths2(str(svg_path))
 
     out: list[VectorPath] = []
     for p, attrs in zip(paths, path_attrs):
-        # Potrace tends to output filled paths; we treat them as OUTLINE for now.
         lp = attrs.get("class") or attrs.get("id") or layer
 
         segments: list[PathSegment] = []
@@ -197,7 +197,6 @@ def svg_to_paths(svg_path: Path, *, layer: str = "OUTLINE") -> List[VectorPath]:
                 segments.append(PathSegment(kind="quad_bezier", pts=pts2))
 
             else:
-                # Unknown segment type: approximate as line by endpoints
                 x0, y0 = seg.start.real, seg.start.imag
                 x1, y1 = seg.end.real, seg.end.imag
                 x0, y0 = _affine_apply(gxf, float(x0), float(y0))
