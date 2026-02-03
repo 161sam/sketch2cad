@@ -48,3 +48,10 @@ Hotfolder:
 sketch2cad watch ./examples/input ./examples/output
 ```
 
+## Smoke: CLI help
+
+```bash
+sketch2cad --help
+sketch2cad run --help
+sketch2cad watch --help
+```
