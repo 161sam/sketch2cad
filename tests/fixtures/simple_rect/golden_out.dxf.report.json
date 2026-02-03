@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "input_path": "tests/fixtures/simple_rect/input.png",
+  "output_dxf": "tests/fixtures/simple_rect/golden_out.dxf",
+  "width": 400,
+  "height": 300,
+  "mm_per_px": 0.5,
+  "num_paths": 2,
+  "errors": []
+}

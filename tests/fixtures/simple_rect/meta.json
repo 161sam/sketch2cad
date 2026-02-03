@@ -1,0 +1,10 @@
+{
+  "name": "simple_rect",
+  "ref_mm": 100.0,
+  "ref_px": 200.0,
+  "tolerances": {
+    "bbox_mm_abs": 2.0,
+    "path_len_rel": 0.10
+  },
+  "notes": "Synthetic rectangle + reference line. Deterministic baseline."
+}
