@@ -16,6 +16,18 @@ def _assert_bbox_close(b1, b2, abs_tol: float):
         assert abs(a - b) <= abs_tol, f"bbox mismatch: {b1} vs {b2} (tol={abs_tol})"
 
 
+def _apply_preprocess_overrides(cfg: PipelineConfig, meta: dict) -> PipelineConfig:
+    pp = meta.get("preprocess") or {}
+    if not isinstance(pp, dict):
+        return cfg
+    cfg.blur_ksize = int(pp.get("blur_ksize", cfg.blur_ksize))
+    cfg.adaptive_block_size = int(pp.get("adaptive_block_size", cfg.adaptive_block_size))
+    cfg.adaptive_c = int(pp.get("adaptive_c", cfg.adaptive_c))
+    cfg.morph_kernel = int(pp.get("morph_kernel", cfg.morph_kernel))
+    cfg.morph_iters = int(pp.get("morph_iters", cfg.morph_iters))
+    return cfg
+
+
 def test_fixtures_against_goldens(tmp_path: Path):
     assert FIXTURES_DIR.exists()
 
@@ -25,7 +37,6 @@ def test_fixtures_against_goldens(tmp_path: Path):
         golden_metrics_path = fdir / "golden_metrics.json"
 
         if not (meta_path.exists() and input_path.exists() and golden_metrics_path.exists()):
-            # fixtures without goldens are allowed while building up
             continue
 
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -43,6 +54,7 @@ def test_fixtures_against_goldens(tmp_path: Path):
             ref_px=ref_px,
             debug_dump=False,
         )
+        cfg = _apply_preprocess_overrides(cfg, meta)
 
         rep = run_pipeline(cfg)
         assert rep.status == "ok", rep.errors
@@ -50,9 +62,7 @@ def test_fixtures_against_goldens(tmp_path: Path):
         got = compute_dxf_metrics(str(out_dxf)).to_dict()
         exp = json.loads(golden_metrics_path.read_text(encoding="utf-8"))
 
-        # Basic invariants
         assert got["num_entities"] >= 1
         assert exp["num_entities"] >= 1
 
-        # Bounding box should stay close (robust against minor spline differences)
         _assert_bbox_close(got["bbox_mm"], exp["bbox_mm"], abs_tol=bbox_tol)

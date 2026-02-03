@@ -1,0 +1,16 @@
+{
+  "name": "thin_lines",
+  "ref_mm": 100.0,
+  "ref_px": 240.0,
+  "tolerances": {
+    "bbox_mm_abs": 4.0
+  },
+  "preprocess": {
+    "blur_ksize": 3,
+    "adaptive_block_size": 51,
+    "adaptive_c": 5,
+    "morph_kernel": 3,
+    "morph_iters": 1
+  },
+  "notes": "Thin strokes / light pen lines. Uses fixture-specific preprocess overrides to avoid erasing lines."
+}

@@ -12,6 +12,18 @@ from sketch2cad.metrics import compute_dxf_metrics
 FIXTURES_DIR = Path("tests/fixtures")
 
 
+def _apply_preprocess_overrides(cfg: PipelineConfig, meta: dict) -> PipelineConfig:
+    pp = meta.get("preprocess") or {}
+    if not isinstance(pp, dict):
+        return cfg
+    cfg.blur_ksize = int(pp.get("blur_ksize", cfg.blur_ksize))
+    cfg.adaptive_block_size = int(pp.get("adaptive_block_size", cfg.adaptive_block_size))
+    cfg.adaptive_c = int(pp.get("adaptive_c", cfg.adaptive_c))
+    cfg.morph_kernel = int(pp.get("morph_kernel", cfg.morph_kernel))
+    cfg.morph_iters = int(pp.get("morph_iters", cfg.morph_iters))
+    return cfg
+
+
 def main() -> int:
     if not FIXTURES_DIR.exists():
         print(f"Fixtures dir not found: {FIXTURES_DIR}")
@@ -46,6 +58,7 @@ def main() -> int:
             debug_dump=True,
             debug_dir=str(debug_dir),
         )
+        cfg = _apply_preprocess_overrides(cfg, meta)
 
         rep = run_pipeline(cfg)
         if rep.status != "ok":
@@ -67,3 +80,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
