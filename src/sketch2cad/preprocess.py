@@ -6,40 +6,41 @@ import numpy as np
 
 def preprocess_to_binary(
     bgr: np.ndarray,
-    blur_ksize: int,
-    block_size: int,
-    c: int,
-    morph_kernel: int,
-    morph_iters: int,
+    *,
+    blur_ksize: int = 5,
+    block_size: int = 41,
+    c: int = 7,
+    morph_kernel: int = 3,
+    morph_iters: int = 1,
 ) -> np.ndarray:
     """
-    Converts BGR image to binary (ink=255, background=0).
-    Robust against shadows via adaptive thresholding.
+    Convert BGR image to binary mask (ink=255, background=0).
+    Steps:
+      - grayscale
+      - gaussian blur
+      - adaptive threshold (inverted)
+      - optional morphology (close) to connect strokes (only if morph_iters > 0)
     """
+    if blur_ksize % 2 == 0:
+        blur_ksize += 1
+    if block_size % 2 == 0:
+        block_size += 1
+    block_size = max(block_size, 3)
+
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (blur_ksize, blur_ksize), 0)
 
-    if blur_ksize and blur_ksize > 1:
-        k = blur_ksize if blur_ksize % 2 == 1 else blur_ksize + 1
-        gray = cv2.GaussianBlur(gray, (k, k), 0)
-
-    bs = block_size if block_size % 2 == 1 else block_size + 1
-    bw = cv2.adaptiveThreshold(
+    binary = cv2.adaptiveThreshold(
         gray,
         255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY_INV,
-        bs,
+        block_size,
         c,
     )
 
-    if morph_kernel and morph_kernel > 1:
-        kernel = cv2.getStructuringElement(
-            cv2.MORPH_ELLIPSE, (morph_kernel, morph_kernel)
-        )
-        it_close = max(1, morph_iters)
-        bw = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel, iterations=it_close)
-        bw = cv2.morphologyEx(
-            bw, cv2.MORPH_OPEN, kernel, iterations=max(1, morph_iters // 2)
-        )
+    if morph_iters and morph_iters > 0 and morph_kernel and morph_kernel > 1:
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (morph_kernel, morph_kernel))
+        binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, k, iterations=morph_iters)
 
-    return bw
+    return binary

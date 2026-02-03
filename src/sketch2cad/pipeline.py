@@ -21,6 +21,8 @@ def run_pipeline(cfg: PipelineConfig) -> Report:
         if bgr is None:
             raise FileNotFoundError(cfg.input_path)
 
+        gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+
         binary = preprocess_to_binary(
             bgr,
             blur_ksize=cfg.blur_ksize,
@@ -45,7 +47,7 @@ def run_pipeline(cfg: PipelineConfig) -> Report:
             debug_holes_svg = str(Path(cfg.debug_dir) / "potrace_holes.svg")
 
         # Split into outer and holes masks (both ink=255)
-        outer_mask, holes_mask = split_outer_holes_masks(binary, min_area=120)
+        outer_mask, holes_mask = split_outer_holes_masks(binary, gray, min_area=120)
 
         if cfg.debug_dump:
             cv2.imwrite(str(Path(cfg.debug_dir) / "mask_outer.png"), outer_mask)

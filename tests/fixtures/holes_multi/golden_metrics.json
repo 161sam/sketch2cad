@@ -1,0 +1,17 @@
+{
+  "num_entities": 6,
+  "entities_by_type": {
+    "LWPOLYLINE": 2,
+    "SPLINE": 4
+  },
+  "layers": {
+    "OUTLINE": 2,
+    "HOLES": 4
+  },
+  "bbox_mm": [
+    72.27272727272727,
+    63.18181818181818,
+    273.6363636363636,
+    173.63636363636363
+  ]
+}

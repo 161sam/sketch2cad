@@ -1,0 +1,16 @@
+{
+  "name": "holes_multi",
+  "ref_mm": 100.0,
+  "ref_px": 220.0,
+  "tolerances": {
+    "bbox_mm_abs": 5.0
+  },
+  "preprocess": {
+    "blur_ksize": 3,
+    "adaptive_block_size": 61,
+    "adaptive_c": 3,
+    "morph_kernel": 3,
+    "morph_iters": 0
+  },
+  "notes": "Outer filled shape with multiple holes. Morphology disabled to avoid closing holes."
+}

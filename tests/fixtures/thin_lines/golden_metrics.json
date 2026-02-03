@@ -1,10 +1,11 @@
 {
-  "num_entities": 3,
+  "num_entities": 9,
   "entities_by_type": {
-    "SPLINE": 3
+    "SPLINE": 9
   },
   "layers": {
-    "OUTLINE": 3
+    "OUTLINE": 3,
+    "HOLES": 6
   },
   "bbox_mm": [
     0.0,
