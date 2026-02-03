@@ -1,0 +1,16 @@
+[Unit]
+Description=Sketch2CAD Hotfolder (User Service)
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/sketch2cad
+EnvironmentFile=%h/sketch2cad/.env
+ExecStart=%h/sketch2cad/.venv/bin/sketch2cad watch
+Restart=on-failure
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
