@@ -1,4 +1,3 @@
-cat > src/sketch2cad/watchdog_service.py <<'EOF'
 from __future__ import annotations
 
 import os
@@ -112,4 +111,3 @@ def watch(input_dir: str, output_dir: str, *, stable_checks: int, stable_interva
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
-EOF
