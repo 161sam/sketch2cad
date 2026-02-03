@@ -66,3 +66,12 @@ def test_fixtures_against_goldens(tmp_path: Path):
         assert exp["num_entities"] >= 1
 
         _assert_bbox_close(got["bbox_mm"], exp["bbox_mm"], abs_tol=bbox_tol)
+
+        # Semantic expectation: holes_* fixtures should produce HOLES layer entities
+        if fdir.name.startswith("holes_"):
+            assert "HOLES" in got["layers"], f"{fdir.name}: expected HOLES layer, got {got[layers]}"
+            if fdir.name == "holes_multi":
+                assert got["layers"].get("HOLES", 0) >= 2, f"{fdir.name}: expected >=2 HOLES entities, got {got[layers]}"
+            if fdir.name == "holes_nested":
+                assert got["layers"].get("HOLES", 0) >= 1, f"{fdir.name}: expected >=1 HOLES entity, got {got[layers]}"
+
